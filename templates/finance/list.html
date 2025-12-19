@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Мои операции{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-4">
+
+                <!-- HEADER -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="mb-0">📋 Мои операции</h3>
+
+                    <div class="d-flex gap-2">
+                        <a href="/export/csv" class="btn btn-outline-primary">
+                            📥 Экспорт CSV
+                        </a>
+                        <a href="/transaction/add" class="btn btn-success">
+                            ➕ Добавить
+                        </a>
+                    </div>
+                </div>
+
+                {% if transactions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Категория</th>
+                                    <th>Комментарий</th>
+                                    <th class="text-end">Сумма</th>
+                                    <th class="text-center">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {% for t in transactions %}
+                                    <tr>
+
+                                        <!-- DATE -->
+                                        <td class="text-muted">
+                                            {{ t.date.strftime('%d.%m.%Y') }}
+                                        </td>
+
+                                        <!-- CATEGORY -->
+                                        <td>
+                                            {% if t.category.type == 'income' %}
+                                                <span class="badge bg-success">
+                                                    {{ t.category.name }}
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-danger">
+                                                    {{ t.category.name }}
+                                                </span>
+                                            {% endif %}
+                                        </td>
+
+                                        <!-- COMMENT -->
+                                        <td>
+                                            {{ t.comment or '—' }}
+                                        </td>
+
+                                        <!-- AMOUNT -->
+                                        <td class="text-end fw-semibold">
+                                            {% if t.category.type == 'income' %}
+                                                <span class="text-success">
+                                                    +{{ "%.2f"|format(t.amount) }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-danger">
+                                                    -{{ "%.2f"|format(t.amount) }}
+                                                </span>
+                                            {% endif %}
+                                        </td>
+
+                                        <!-- ACTIONS -->
+                                        <td class="text-center">
+                                            <a href="/transaction/edit/{{ t.id }}"
+                                               class="btn btn-sm btn-outline-primary">
+                                                ✏️
+                                            </a>
+                                            <a href="/transaction/delete/{{ t.id }}"
+                                               class="btn btn-sm btn-outline-danger"
+                                               onclick="return confirm('Удалить операцию?')">
+                                                🗑
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info text-center">
+                        Операций пока нет
+                    </div>
+                {% endif %}
+
+                <a href="/dashboard" class="btn btn-outline-secondary mt-3">
+                    ← Назад
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

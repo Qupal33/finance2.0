@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-4">
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <h3 class="text-center mb-4">Вход</h3>
+
+                {% if message %}
+                <div class="alert alert-{{ message_type }} text-center">
+                    {{ message }}
+                </div>
+                {% endif %}
+
+                <form method="POST">
+
+                    <div class="mb-3">
+                        <label class="form-label">Почта</label>
+                        <input type="email"
+                               name="email"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Пароль</label>
+                        <input type="password"
+                               name="password"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-primary">
+                            Войти
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

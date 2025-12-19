@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Статистика расходов{% endblock %}
+
+{% block content %}
+<div class="card shadow-lg border-0">
+    <div class="card-body p-4">
+
+        <h3 class="mb-3">📊 Статистика расходов</h3>
+        <p class="text-muted">{{ period_label }}</p>
+
+        <!-- PERIOD FORM -->
+        <form method="GET" class="row g-2 mb-4">
+            <div class="col-md-4">
+                <label class="form-label">С</label>
+                <input type="date"
+                       name="date_from"
+                       class="form-control"
+                       value="{{ date_from }}">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">По</label>
+                <input type="date"
+                       name="date_to"
+                       class="form-control"
+                       value="{{ date_to }}">
+            </div>
+
+            <div class="col-md-4 d-flex align-items-end">
+                <button class="btn btn-primary w-100">
+                    Показать
+                </button>
+            </div>
+        </form>
+
+        {% if values %}
+            <canvas id="chart"></canvas>
+        {% else %}
+            <div class="alert alert-info text-center">
+                Нет данных за выбранный период
+            </div>
+        {% endif %}
+
+        <a href="/stats" class="btn btn-outline-secondary mt-3">
+            Сбросить период
+        </a>
+
+    </div>
+</div>
+
+<!-- CHART JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('chart');
+
+if (ctx) {
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: {{ labels | tojson }},
+            datasets: [{
+                data: {{ values | tojson }},
+                backgroundColor: [
+                    '#ff6384',
+                    '#36a2eb',
+                    '#ffcd56',
+                    '#4bc0c0',
+                    '#9966ff'
+                ]
+            }]
+        }
+    });
+}
+</script>
+{% endblock %}

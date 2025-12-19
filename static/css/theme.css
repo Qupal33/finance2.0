@@ -1,0 +1,48 @@
+/* ====== DARK THEME ====== */
+body.dark-theme {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.dark-theme .card {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+.dark-theme .navbar {
+    background-color: #1f1f1f !important;
+}
+
+.dark-theme .table {
+    color: #e0e0e0;
+}
+
+.dark-theme .table-light {
+    background-color: #2a2a2a;
+}
+
+.dark-theme .form-control,
+.dark-theme .form-select {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+.dark-theme .form-control::placeholder {
+    color: #aaa;
+}
+
+.dark-theme .btn-outline-secondary {
+    color: #ccc;
+    border-color: #666;
+}
+
+.dark-theme .btn-outline-secondary:hover {
+    background-color: #444;
+}
+
+.dark-theme .alert {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #ddd;
+}
