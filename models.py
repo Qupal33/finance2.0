@@ -47,7 +47,14 @@ class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime, default=datetime.utcnow)
-    comment = db.Column(db.String(255))
+    comment = db.Column(db.String(255))  # примечание / доп. комментарий
+
+    # поля сделки отдела продаж АЦБК
+    client = db.Column(db.String(255))       # клиент (контрагент)
+    product = db.Column(db.String(255))      # продукция (бумага, картон и т.п.)
+    region = db.Column(db.String(100))       # регион поставки (города/область)
+    volume_tons = db.Column(db.Float)        # объём, тонн
+    channel = db.Column(db.String(100))      # канал сбыта (экспорт, Россия и др.)
 
     user_id = db.Column(
         db.Integer,

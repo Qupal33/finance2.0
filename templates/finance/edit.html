@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Редактирование операции{% endblock %}
+{% block title %}Редактирование сделки{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -14,7 +14,7 @@
                         ✏️
                     </div>
                     <div>
-                        <h4 class="mb-0">Редактирование операции</h4>
+                        <h4 class="mb-0">Редактирование сделки отдела продаж</h4>
                         <small class="text-muted">
                             Измените данные и сохраните
                         </small>
@@ -26,7 +26,7 @@
                     <!-- TYPE (READONLY) -->
                     <div class="mb-3">
                         <label class="form-label text-muted">
-                            Тип операции
+                            Тип движения
                         </label>
                         <input type="text"
                                class="form-control bg-light"
@@ -37,7 +37,7 @@
                     <!-- CATEGORY -->
                     <div class="mb-3">
                         <label class="form-label">
-                            Категория
+                            Статья (выручка/затраты отдела продаж АЦБК)
                         </label>
                         <select name="category_id"
                                 class="form-select"
@@ -51,10 +51,78 @@
                         </select>
                     </div>
 
+                    <!-- CLIENT -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Клиент (контрагент)
+                        </label>
+                        <input type="text"
+                               name="client"
+                               class="form-control"
+                               value="{{ transaction.client or '' }}"
+                               placeholder="Например: ООО «АрхБумага»">
+                    </div>
+
+                    <!-- PRODUCT -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Продукция
+                        </label>
+                        <input type="text"
+                               name="product"
+                               class="form-control"
+                               value="{{ transaction.product or '' }}"
+                               placeholder="Например: Бумага офисная А4, 80 г/м²">
+                    </div>
+
+                    <!-- REGION -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Регион поставки
+                        </label>
+                        <select name="region" class="form-select">
+                            <option value="" {% if not transaction.region %}selected{% endif %}>Не указан</option>
+                            <option value="Архангельск" {% if transaction.region == 'Архангельск' %}selected{% endif %}>Архангельск</option>
+                            <option value="Северодвинск" {% if transaction.region == 'Северодвинск' %}selected{% endif %}>Северодвинск</option>
+                            <option value="Новодвинск" {% if transaction.region == 'Новодвинск' %}selected{% endif %}>Новодвинск</option>
+                            <option value="Коряжма" {% if transaction.region == 'Коряжма' %}selected{% endif %}>Коряжма</option>
+                            <option value="Архангельская область (прочее)" {% if transaction.region == 'Архангельская область (прочее)' %}selected{% endif %}>Архангельская область (прочее)</option>
+                            <option value="Россия (другие регионы)" {% if transaction.region == 'Россия (другие регионы)' %}selected{% endif %}>Россия (другие регионы)</option>
+                            <option value="Экспорт" {% if transaction.region == 'Экспорт' %}selected{% endif %}>Экспорт</option>
+                        </select>
+                    </div>
+
+                    <!-- VOLUME -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Объём, тонн
+                        </label>
+                        <input type="number"
+                               name="volume_tons"
+                               step="0.01"
+                               class="form-control"
+                               value="{{ transaction.volume_tons or '' }}">
+                    </div>
+
+                    <!-- CHANNEL -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Канал сбыта
+                        </label>
+                        <select name="channel" class="form-select">
+                            <option value="" {% if not transaction.channel %}selected{% endif %}>Не указан</option>
+                            <option value="Российский рынок" {% if transaction.channel == 'Российский рынок' %}selected{% endif %}>Российский рынок</option>
+                            <option value="Экспорт" {% if transaction.channel == 'Экспорт' %}selected{% endif %}>Экспорт</option>
+                            <option value="Крупный дистрибьютор" {% if transaction.channel == 'Крупный дистрибьютор' %}selected{% endif %}>Крупный дистрибьютор</option>
+                            <option value="Прямой клиент" {% if transaction.channel == 'Прямой клиент' %}selected{% endif %}>Прямой клиент</option>
+                            <option value="Госзакупка" {% if transaction.channel == 'Госзакупка' %}selected{% endif %}>Госзакупка</option>
+                        </select>
+                    </div>
+
                     <!-- AMOUNT -->
                     <div class="mb-3">
                         <label class="form-label">
-                            Сумма
+                            Сумма, ₽
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">₽</span>
@@ -70,7 +138,7 @@
                     <!-- DATE -->
                     <div class="mb-3">
                         <label class="form-label">
-                            Дата операции
+                            Дата сделки
                         </label>
                         <input type="date"
                                name="date"
@@ -81,12 +149,12 @@
                     <!-- COMMENT -->
                     <div class="mb-4">
                         <label class="form-label">
-                            Комментарий
+                            Примечание
                         </label>
                         <textarea name="comment"
                                   class="form-control"
                                   rows="2"
-                                  placeholder="Например: обед, зарплата, такси">{{ transaction.comment }}</textarea>
+                                  placeholder="Необязательное примечание к сделке">{{ transaction.comment }}</textarea>
                     </div>
 
                     <!-- ACTIONS -->

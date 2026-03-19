@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Главная{% endblock %}
+{% block title %}Сводка по продажам{% endblock %}
 
 {% block content %}
 {% if exceeded %}
 <div id="limitToast" class="limit-toast">
-    <strong>⚠️ Превышены лимиты</strong>
+    <strong>⚠️ Превышены плановые лимиты затрат отдела продаж</strong>
     <ul class="mb-0 mt-1">
         {% for e in exceeded %}
             <li>
@@ -18,6 +18,8 @@
 
 <h2 class="mb-4">
     Привет, {{ current_user.name }} 👋
+    <br>
+    <small class="text-muted">Отдел продаж Архангельского ЦБК по Архангельской области</small>
 </h2>
 
 <!-- СВОДКА -->
@@ -26,7 +28,7 @@
     <div class="col-md-4 mb-3">
         <div class="card shadow-sm border-0 text-center">
             <div class="card-body">
-                <h6 class="text-muted">Доходы (месяц)</h6>
+                <h6 class="text-muted">Выручка (месяц)</h6>
                 <h3 class="text-success">
                     +{{ "%.2f"|format(income) }}
                 </h3>
@@ -37,7 +39,7 @@
     <div class="col-md-4 mb-3">
         <div class="card shadow-sm border-0 text-center">
             <div class="card-body">
-                <h6 class="text-muted">Расходы (месяц)</h6>
+                <h6 class="text-muted">Затраты (месяц)</h6>
                 <h3 class="text-danger">
                     -{{ "%.2f"|format(expense) }}
                 </h3>
@@ -48,7 +50,7 @@
     <div class="col-md-4 mb-3">
         <div class="card shadow-sm border-0 text-center">
             <div class="card-body">
-                <h6 class="text-muted">Баланс</h6>
+                <h6 class="text-muted">Результат (выручка − затраты)</h6>
                 <h3 class="{% if balance >= 0 %}text-success{% else %}text-danger{% endif %}">
                     {{ "%.2f"|format(balance) }}
                 </h3>
@@ -61,10 +63,10 @@
 <!-- ДЕЙСТВИЯ -->
 <div class="list-group">
     <a href="/transaction/add" class="list-group-item list-group-item-action">
-        ➕ Добавить операцию
+        ➕ Добавить сделку
     </a>
     <a href="/transactions" class="list-group-item list-group-item-action">
-        📋 Мои операции
+        📋 Журнал сделок
     </a>
     <a href="/stats" class="list-group-item list-group-item-action">
         📊 Статистика

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Мои операции{% endblock %}
+{% block title %}Журнал сделок{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -10,7 +10,7 @@
 
                 <!-- HEADER -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="mb-0">📋 Мои операции</h3>
+                    <h3 class="mb-0">📋 Журнал сделок отдела продаж</h3>
 
                     <div class="d-flex gap-2">
                         <a href="/export/csv" class="btn btn-outline-primary">
@@ -28,9 +28,13 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Дата</th>
-                                    <th>Категория</th>
-                                    <th>Комментарий</th>
-                                    <th class="text-end">Сумма</th>
+                                    <th>Клиент</th>
+                                    <th>Продукция</th>
+                                    <th>Регион</th>
+                                    <th>Канал</th>
+                                    <th>Статья (выручка/затраты отдела продаж АЦБК)</th>
+                                    <th class="text-end">Объём, т</th>
+                                    <th class="text-end">Сумма, ₽</th>
                                     <th class="text-center">Действия</th>
                                 </tr>
                             </thead>
@@ -42,6 +46,26 @@
                                         <!-- DATE -->
                                         <td class="text-muted">
                                             {{ t.date.strftime('%d.%m.%Y') }}
+                                        </td>
+
+                                        <!-- CLIENT -->
+                                        <td>
+                                            {{ t.client or '—' }}
+                                        </td>
+
+                                        <!-- PRODUCT -->
+                                        <td>
+                                            {{ t.product or '—' }}
+                                        </td>
+
+                                        <!-- REGION -->
+                                        <td>
+                                            {{ t.region or '—' }}
+                                        </td>
+
+                                        <!-- CHANNEL -->
+                                        <td>
+                                            {{ t.channel or '—' }}
                                         </td>
 
                                         <!-- CATEGORY -->
@@ -57,9 +81,9 @@
                                             {% endif %}
                                         </td>
 
-                                        <!-- COMMENT -->
-                                        <td>
-                                            {{ t.comment or '—' }}
+                                        <!-- VOLUME -->
+                                        <td class="text-end">
+                                            {{ "%.2f"|format(t.volume_tons) if t.volume_tons is not none else '—' }}
                                         </td>
 
                                         <!-- AMOUNT -->
@@ -83,7 +107,7 @@
                                             </a>
                                             <a href="/transaction/delete/{{ t.id }}"
                                                class="btn btn-sm btn-outline-danger"
-                                               onclick="return confirm('Удалить операцию?')">
+                                               onclick="return confirm('Удалить сделку?')">
                                                 🗑
                                             </a>
                                         </td>

@@ -46,11 +46,19 @@ def create_categories():
         return
 
     categories = [
-        Category(name='Зарплата', type='income'),
-        Category(name='Фриланс', type='income'),
-        Category(name='Еда', type='expense', limit=0),
-        Category(name='Транспорт', type='expense', limit=0),
-        Category(name='Развлечения', type='expense', limit=0)
+        # выручка
+        Category(name='Бумага офисная (АЦБК)', type='income'),
+        Category(name='Бумага упаковочная (АЦБК)', type='income'),
+        Category(name='Картон тарный (АЦБК)', type='income'),
+        Category(name='Целлюлоза (экспорт)', type='income'),
+        Category(name='Прочая выручка отдела продаж', type='income'),
+
+        # затраты
+        Category(name='Логистика по Архангельской области', type='expense', limit=0),
+        Category(name='Логистика экспортных поставок', type='expense', limit=0),
+        Category(name='Складирование и погрузка', type='expense', limit=0),
+        Category(name='Скидки и бонусы клиентам', type='expense', limit=0),
+        Category(name='Маркетинг и продвижение', type='expense', limit=0)
     ]
     db.session.add_all(categories)
     db.session.commit()
@@ -109,7 +117,6 @@ def register():
     )
 
 
-
 # ---------- CONFIRM EMAIL ----------
 @app.route('/confirm/<token>')
 def confirm_email(token):
@@ -149,7 +156,6 @@ def login():
     )
 
 
-
 # ---------- LOGOUT ----------
 @app.route('/logout')
 @login_required
@@ -164,7 +170,7 @@ def logout():
 def dashboard():
     start = datetime.now().replace(day=1, hour=0, minute=0, second=0)
 
-    # доходы
+    # доходы (выручка отдела продаж)
     income = (
         db.session.query(func.sum(Transaction.amount))
         .join(Category)
@@ -175,7 +181,7 @@ def dashboard():
         ).scalar() or 0
     )
 
-    # расходы
+    # расходы (затраты отдела продаж)
     expense = (
         db.session.query(func.sum(Transaction.amount))
         .join(Category)
@@ -186,7 +192,7 @@ def dashboard():
         ).scalar() or 0
     )
 
-    # 🔥 ПРОВЕРКА ЛИМИТОВ
+    # 🔥 ПРОВЕРКА ЛИМИТОВ ЗАТРАТ
     exceeded = []
 
     limits = (
@@ -223,7 +229,6 @@ def dashboard():
     )
 
 
-
 # ---------- PROFILE ----------
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
@@ -237,7 +242,6 @@ def profile():
             current_user.avatar = filename
             db.session.commit()
     return render_template('profile.html')
-
 
 
 # ---------- DELETE AVATAR ----------
@@ -269,7 +273,12 @@ def add_transaction():
             category_id=int(request.form['category_id']),
             user_id=current_user.id,
             comment=request.form.get('comment'),
-            date=date
+            date=date,
+            client=request.form.get('client'),
+            product=request.form.get('product'),
+            region=request.form.get('region'),
+            volume_tons=float(request.form['volume_tons']) if request.form.get('volume_tons') else None,
+            channel=request.form.get('channel')
         )
 
         db.session.add(transaction)
@@ -308,13 +317,22 @@ def edit_transaction(id):
         t.category_id = request.form['category_id']
         t.comment = request.form['comment']
         t.date = datetime.strptime(request.form['date'], '%Y-%m-%d')
+        t.client = request.form.get('client')
+        t.product = request.form.get('product')
+        t.region = request.form.get('region')
+        t.volume_tons = float(request.form['volume_tons']) if request.form.get('volume_tons') else None
+        t.channel = request.form.get('channel')
         db.session.commit()
         return redirect(url_for('transactions'))
+
+    # значение даты для input type=date
+    date_value = t.date.strftime('%Y-%m-%d') if t.date else ''
 
     return render_template(
         'finance/edit.html',
         transaction=t,
-        categories=categories
+        categories=categories,
+        date_value=date_value
     )
 
 
@@ -392,13 +410,19 @@ def export_csv():
     output = io.StringIO()
     writer = csv.writer(output, delimiter=';')
 
-    writer.writerow(['Дата', 'Категория', 'Тип', 'Комментарий', 'Сумма'])
+    writer.writerow(['Дата сделки', 'Клиент', 'Продукция', 'Регион', 'Канал сбыта',
+                     'Статья (выручка/затраты отдела продаж АЦБК)', 'Объём, т', 'Тип движения', 'Примечание', 'Сумма, ₽'])
 
     for t in transactions:
         writer.writerow([
             t.date.strftime('%d.%m.%Y'),
+            t.client or '',
+            t.product or '',
+            t.region or '',
+            t.channel or '',
             t.category.name,
-            'Доход' if t.category.type == 'income' else 'Расход',
+            ('%.2f' % t.volume_tons) if t.volume_tons is not None else '',
+            'Выручка' if t.category.type == 'income' else 'Затраты',
             t.comment or '',
             t.amount
         ])
